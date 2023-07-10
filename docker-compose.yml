@@ -1,0 +1,56 @@
+version: "3.8"
+services:
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - 8000:8000
+    volumes:
+      - ./backend:/app
+      - images:/app/images
+    depends_on:
+      - mongodb
+      
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - 3000:3000
+    volumes:
+      - ./frontend:/app
+    depends_on:
+      - backend
+
+  mongodb:
+    image: mongo:5.0
+    restart: always
+    volumes:
+      - ./data:/data
+    ports:
+      - 1234:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: lia
+      MONGO_INITDB_ROOT_PASSWORD: 1234
+
+volumes:
+  images:
+    driver_opts:
+      type: "nfs"
+      o: "addr=192.168.50.240,nfsvers=4"
+      device: ":/volume1/ai_team/vision/Erebor/test_images"
+      # device: ":/volume1/ai_team/vision/Erebor/Test_dataset/original/testdataset/images"
+      #device: ":/volume1/ai_team/vision/unzip_new/Data/Test_dataset/original/testdataset_obt_v3/images"
+
+
+# version: '3.8'
+# services:
+#   mongo-db:
+#     image: mongo:5.0
+#     restart: always
+#     volumes:
+#       - ./data:/data
+#     ports:
+#       - 1234:27017
+#     environment:
+#       MONGO_INITDB_ROOT_USERNAME: luke
+#       MONGO_INITDB_ROOT_PASSWORD: 1234
